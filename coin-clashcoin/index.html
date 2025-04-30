@@ -18,65 +18,105 @@
       background-color: #4f46e5;
       color: white;
     }
+    .disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
   <header class="mb-6 text-center">
     <h1 class="text-4xl font-bold mb-2">Coin Clashcoin</h1>
-    <p class="text-lg text-gray-300">Select your fighter, use skills, win coins!</p>
+    <p class="text-lg text-gray-300">Two players select fighters, use skills, and fight to win coins!</p>
   </header>
 
-  <main class="w-full max-w-3xl bg-gray-800 rounded-lg p-6 shadow-lg">
-    <section id="coin-balance" class="mb-6 text-center text-xl font-semibold">
-      Coins: <span id="coins">0</span>
+  <main class="w-full max-w-4xl bg-gray-800 rounded-lg p-6 shadow-lg">
+    <section id="coin-balance" class="mb-6 text-center text-xl font-semibold flex justify-around gap-12">
+      <div>Player 1 Coins: <span id="coins-player1">0</span></div>
+      <div>Player 2 Coins: <span id="coins-player2">0</span></div>
     </section>
 
-    <section id="fighter-selection" class="mb-6">
-      <h2 class="text-2xl font-semibold mb-4">Select Your Fighter</h2>
-      <div class="grid grid-cols-3 gap-4">
-        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="warrior">
-          <i class="fas fa-shield-alt fa-3x mb-2"></i>
-          <div class="text-lg font-bold">Warrior</div>
-          <div class="text-sm text-gray-400">Strong defense, moderate attack</div>
-        </button>
-        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="mage">
-          <i class="fas fa-hat-wizard fa-3x mb-2"></i>
-          <div class="text-lg font-bold">Mage</div>
-          <div class="text-sm text-gray-400">Powerful magic attacks</div>
-        </button>
-        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="rogue">
-          <i class="fas fa-user-ninja fa-3x mb-2"></i>
-          <div class="text-lg font-bold">Rogue</div>
-          <div class="text-sm text-gray-400">Fast and agile</div>
-        </button>
+    <section id="fighter-selection" class="mb-6 grid grid-cols-2 gap-8">
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Player 1: Select Your Fighter</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="warrior" data-player="1">
+            <i class="fas fa-shield-alt fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Warrior</div>
+            <div class="text-sm text-gray-400">Strong defense, moderate attack</div>
+          </button>
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="mage" data-player="1">
+            <i class="fas fa-hat-wizard fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Mage</div>
+            <div class="text-sm text-gray-400">Powerful magic attacks</div>
+          </button>
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="rogue" data-player="1">
+            <i class="fas fa-user-ninja fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Rogue</div>
+            <div class="text-sm text-gray-400">Fast and agile</div>
+          </button>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Player 2: Select Your Fighter</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="warrior" data-player="2">
+            <i class="fas fa-shield-alt fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Warrior</div>
+            <div class="text-sm text-gray-400">Strong defense, moderate attack</div>
+          </button>
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="mage" data-player="2">
+            <i class="fas fa-hat-wizard fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Mage</div>
+            <div class="text-sm text-gray-400">Powerful magic attacks</div>
+          </button>
+          <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="rogue" data-player="2">
+            <i class="fas fa-user-ninja fa-3x mb-2"></i>
+            <div class="text-lg font-bold">Rogue</div>
+            <div class="text-sm text-gray-400">Fast and agile</div>
+          </button>
+        </div>
       </div>
     </section>
 
     <section id="battle-section" class="hidden">
       <h2 class="text-2xl font-semibold mb-4">Battle</h2>
-      <div class="mb-4">
-        <div class="mb-2">Your Fighter: <span id="user-fighter-name" class="font-bold"></span></div>
-        <div class="mb-2">Opponent Fighter: <span id="opponent-fighter-name" class="font-bold"></span></div>
-      </div>
-      <div class="mb-4">
-        <div class="mb-2">Your Health: <span id="user-health" class="font-bold">100</span></div>
-        <div class="mb-2">Opponent Health: <span id="opponent-health" class="font-bold">100</span></div>
-      </div>
-      <div class="mb-6">
-        <h3 class="text-xl font-semibold mb-2">Use Your Skills</h3>
-        <div id="skills-container" class="flex gap-4">
-          <!-- Skill buttons will be inserted here -->
+      <div class="grid grid-cols-2 gap-8 mb-4">
+        <div>
+          <div class="mb-2">Player 1 Fighter: <span id="player1-fighter-name" class="font-bold"></span></div>
+          <div class="mb-2">Health: <span id="player1-health" class="font-bold">100</span></div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Player 1 Skills</h3>
+            <div id="player1-skills-container" class="flex gap-4"></div>
+          </div>
+        </div>
+        <div>
+          <div class="mb-2">Player 2 Fighter: <span id="player2-fighter-name" class="font-bold"></span></div>
+          <div class="mb-2">Health: <span id="player2-health" class="font-bold">100</span></div>
+          <div>
+            <h3 class="text-xl font-semibold mb-2">Player 2 Skills</h3>
+            <div id="player2-skills-container" class="flex gap-4"></div>
+          </div>
         </div>
       </div>
-      <div id="battle-log" class="bg-gray-700 rounded p-4 h-40 overflow-y-auto text-sm"></div>
-      <div class="mt-6 text-center">
-        <button id="restart-button" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Restart Battle</button>
+      <div id="battle-log" class="bg-gray-700 rounded p-4 h-40 overflow-y-auto text-sm mb-4"></div>
+      <div class="text-center">
+        <div id="turn-indicator" class="mb-4 font-semibold text-lg"></div>
+        <button id="restart-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Restart Battle</button>
       </div>
     </section>
 
-    <section id="daily-claim-section" class="mt-6 text-center">
-      <button id="claim-daily-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition">Claim Daily Coins</button>
-      <p id="claim-message" class="mt-2 text-gray-400"></p>
+    <section id="daily-claim-section" class="mt-6 text-center grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div>
+        <h3 class="text-xl font-semibold mb-2">Player 1 Daily Coins</h3>
+        <button id="claim-daily-button-player1" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition w-full">Claim Daily Coins</button>
+        <p id="claim-message-player1" class="mt-2 text-gray-400 min-h-[1.5rem]"></p>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold mb-2">Player 2 Daily Coins</h3>
+        <button id="claim-daily-button-player2" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition w-full">Claim Daily Coins</button>
+        <p id="claim-message-player2" class="mt-2 text-gray-400 min-h-[1.5rem]"></p>
+      </div>
     </section>
   </main>
 
@@ -108,47 +148,63 @@
       }
     };
 
-    let userFighter = null;
-    let opponentFighter = null;
-    let userHealth = 0;
-    let opponentHealth = 0;
-    let coins = 0;
-    let lastClaimDate = null;
+    let player1Fighter = null;
+    let player2Fighter = null;
+    let player1Health = 0;
+    let player2Health = 0;
+    let coinsPlayer1 = 0;
+    let coinsPlayer2 = 0;
+    let lastClaimDatePlayer1 = null;
+    let lastClaimDatePlayer2 = null;
     let battleLog = [];
+    let currentTurn = 1; // 1 for player1, 2 for player2
 
-    const coinsEl = document.getElementById("coins");
+    const coinsPlayer1El = document.getElementById("coins-player1");
+    const coinsPlayer2El = document.getElementById("coins-player2");
     const fighterSelectionEl = document.getElementById("fighter-selection");
     const battleSectionEl = document.getElementById("battle-section");
-    const userFighterNameEl = document.getElementById("user-fighter-name");
-    const opponentFighterNameEl = document.getElementById("opponent-fighter-name");
-    const userHealthEl = document.getElementById("user-health");
-    const opponentHealthEl = document.getElementById("opponent-health");
-    const skillsContainerEl = document.getElementById("skills-container");
+    const player1FighterNameEl = document.getElementById("player1-fighter-name");
+    const player2FighterNameEl = document.getElementById("player2-fighter-name");
+    const player1HealthEl = document.getElementById("player1-health");
+    const player2HealthEl = document.getElementById("player2-health");
+    const player1SkillsContainerEl = document.getElementById("player1-skills-container");
+    const player2SkillsContainerEl = document.getElementById("player2-skills-container");
     const battleLogEl = document.getElementById("battle-log");
-    const claimDailyButton = document.getElementById("claim-daily-button");
-    const claimMessageEl = document.getElementById("claim-message");
+    const claimDailyButtonPlayer1 = document.getElementById("claim-daily-button-player1");
+    const claimDailyButtonPlayer2 = document.getElementById("claim-daily-button-player2");
+    const claimMessagePlayer1El = document.getElementById("claim-message-player1");
+    const claimMessagePlayer2El = document.getElementById("claim-message-player2");
     const restartButton = document.getElementById("restart-button");
+    const turnIndicatorEl = document.getElementById("turn-indicator");
 
     function saveState() {
-      localStorage.setItem("coins", coins);
-      localStorage.setItem("lastClaimDate", lastClaimDate);
-      localStorage.setItem("userFighter", userFighter ? userFighter.name : "");
+      localStorage.setItem("coinsPlayer1", coinsPlayer1);
+      localStorage.setItem("coinsPlayer2", coinsPlayer2);
+      localStorage.setItem("lastClaimDatePlayer1", lastClaimDatePlayer1);
+      localStorage.setItem("lastClaimDatePlayer2", lastClaimDatePlayer2);
+      localStorage.setItem("player1Fighter", player1Fighter ? player1Fighter.name : "");
+      localStorage.setItem("player2Fighter", player2Fighter ? player2Fighter.name : "");
     }
 
     function loadState() {
-      coins = parseInt(localStorage.getItem("coins")) || 0;
-      lastClaimDate = localStorage.getItem("lastClaimDate");
-      const savedFighterName = localStorage.getItem("userFighter");
-      userFighter = Object.values(fighters).find(f => f.name === savedFighterName) || null;
+      coinsPlayer1 = parseInt(localStorage.getItem("coinsPlayer1")) || 0;
+      coinsPlayer2 = parseInt(localStorage.getItem("coinsPlayer2")) || 0;
+      lastClaimDatePlayer1 = localStorage.getItem("lastClaimDatePlayer1");
+      lastClaimDatePlayer2 = localStorage.getItem("lastClaimDatePlayer2");
+      const savedFighterName1 = localStorage.getItem("player1Fighter");
+      const savedFighterName2 = localStorage.getItem("player2Fighter");
+      player1Fighter = Object.values(fighters).find(f => f.name === savedFighterName1) || null;
+      player2Fighter = Object.values(fighters).find(f => f.name === savedFighterName2) || null;
     }
 
     function updateCoinsDisplay() {
-      coinsEl.textContent = coins;
+      coinsPlayer1El.textContent = coinsPlayer1;
+      coinsPlayer2El.textContent = coinsPlayer2;
     }
 
     function updateHealthDisplay() {
-      userHealthEl.textContent = userHealth;
-      opponentHealthEl.textContent = opponentHealth;
+      player1HealthEl.textContent = player1Health;
+      player2HealthEl.textContent = player2Health;
     }
 
     function addBattleLog(message) {
@@ -160,84 +216,78 @@
       battleLogEl.scrollTop = battleLogEl.scrollHeight;
     }
 
-    function getRandomOpponent() {
-      const fighterKeys = Object.keys(fighters);
-      const randomKey = fighterKeys[Math.floor(Math.random() * fighterKeys.length)];
-      return fighters[randomKey];
-    }
-
-    function startBattle() {
-      if (!userFighter) return;
-      opponentFighter = getRandomOpponent();
-      userHealth = userFighter.health;
-      opponentHealth = opponentFighter.health;
-      userFighterNameEl.textContent = userFighter.name;
-      opponentFighterNameEl.textContent = opponentFighter.name;
-      updateHealthDisplay();
-      battleLog = [];
-      battleLogEl.textContent = "";
-      fighterSelectionEl.classList.add("hidden");
-      battleSectionEl.classList.remove("hidden");
-      claimDailyButton.disabled = true;
-      claimMessageEl.textContent = "";
-      restartButton.classList.add("hidden");
-      renderSkills();
-    }
-
-    function renderSkills() {
-      skillsContainerEl.innerHTML = "";
-      userFighter.skills.forEach((skill, index) => {
+    function renderSkills(player) {
+      const skillsContainer = player === 1 ? player1SkillsContainerEl : player2SkillsContainerEl;
+      const fighter = player === 1 ? player1Fighter : player2Fighter;
+      skillsContainer.innerHTML = "";
+      fighter.skills.forEach((skill, index) => {
         const btn = document.createElement("button");
         btn.className = "skill-button bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded";
         btn.textContent = skill.name;
         btn.title = skill.description;
-        btn.onclick = () => useSkill(index);
-        skillsContainerEl.appendChild(btn);
+        btn.disabled = currentTurn !== player;
+        btn.onclick = () => useSkill(player, index);
+        skillsContainer.appendChild(btn);
       });
     }
 
-    function useSkill(skillIndex) {
-      if (userHealth <= 0 || opponentHealth <= 0) return;
-      const skill = userFighter.skills[skillIndex];
-      // User attacks opponent
-      opponentHealth -= skill.damage;
-      addBattleLog(`You used ${skill.name} and dealt ${skill.damage} damage.`);
-      if (opponentHealth <= 0) {
-        opponentHealth = 0;
-        updateHealthDisplay();
-        addBattleLog("You won the battle!");
-        endBattle(true);
-        return;
+    function useSkill(player, skillIndex) {
+      if (player1Health <= 0 || player2Health <= 0) return;
+      if (currentTurn !== player) return;
+      const attacker = player === 1 ? player1Fighter : player2Fighter;
+      const defender = player === 1 ? player2Fighter : player1Fighter;
+
+      const skill = attacker.skills[skillIndex];
+      if (player === 1) {
+        player2Health -= skill.damage;
+        if (player2Health < 0) player2Health = 0;
+        addBattleLog(`Player 1 used ${skill.name} and dealt ${skill.damage} damage.`);
+      } else {
+        player1Health -= skill.damage;
+        if (player1Health < 0) player1Health = 0;
+        addBattleLog(`Player 2 used ${skill.name} and dealt ${skill.damage} damage.`);
       }
       updateHealthDisplay();
 
-      // Opponent attacks user with random skill
-      const oppSkillIndex = Math.floor(Math.random() * opponentFighter.skills.length);
-      const oppSkill = opponentFighter.skills[oppSkillIndex];
-      userHealth -= oppSkill.damage;
-      addBattleLog(`Opponent used ${oppSkill.name} and dealt ${oppSkill.damage} damage.`);
-      if (userHealth <= 0) {
-        userHealth = 0;
-        updateHealthDisplay();
-        addBattleLog("You lost the battle.");
-        endBattle(false);
+      if (player1Health <= 0 || player2Health <= 0) {
+        endBattle();
         return;
       }
-      updateHealthDisplay();
+
+      // Switch turn
+      currentTurn = currentTurn === 1 ? 2 : 1;
+      updateTurnIndicator();
+      renderSkills(1);
+      renderSkills(2);
     }
 
-    function endBattle(userWon) {
-      claimDailyButton.disabled = false;
-      restartButton.classList.remove("hidden");
-      if (userWon) {
-        coins += 4;
-        addBattleLog("You earned 4 coins!");
-      } else {
-        coins += 1;
-        addBattleLog("You earned 1 coin.");
+    function endBattle() {
+      let winner = null;
+      if (player1Health <= 0 && player2Health <= 0) {
+        addBattleLog("It's a draw!");
+      } else if (player1Health <= 0) {
+        addBattleLog("Player 2 won the battle!");
+        winner = 2;
+      } else if (player2Health <= 0) {
+        addBattleLog("Player 1 won the battle!");
+        winner = 1;
+      }
+      if (winner === 1) {
+        coinsPlayer1 += 4;
+        addBattleLog("Player 1 earned 4 coins!");
+      } else if (winner === 2) {
+        coinsPlayer2 += 4;
+        addBattleLog("Player 2 earned 4 coins!");
       }
       updateCoinsDisplay();
       saveState();
+      claimDailyButtonPlayer1.disabled = false;
+      claimDailyButtonPlayer2.disabled = false;
+      restartButton.classList.remove("hidden");
+      currentTurn = 0;
+      updateTurnIndicator();
+      renderSkills(1);
+      renderSkills(2);
     }
 
     function restartBattle() {
@@ -246,60 +296,104 @@
       battleLog = [];
       battleLogEl.textContent = "";
       restartButton.classList.add("hidden");
+      player1Health = 0;
+      player2Health = 0;
+      player1Fighter = null;
+      player2Fighter = null;
+      saveState();
+      updateHealthDisplay();
+      updateCoinsDisplay();
+      currentTurn = 1;
+      updateTurnIndicator();
     }
 
-    function canClaimDaily() {
+    function canClaimDaily(lastClaimDate) {
       if (!lastClaimDate) return true;
       const lastDate = new Date(lastClaimDate);
       const now = new Date();
       return now.toDateString() !== lastDate.toDateString();
     }
 
-    function claimDailyCoins() {
-      if (!canClaimDaily()) {
-        claimMessageEl.textContent = "You have already claimed your daily coins today.";
-        return;
+    function claimDailyCoins(player) {
+      if (player === 1) {
+        if (!canClaimDaily(lastClaimDatePlayer1)) {
+          claimMessagePlayer1El.textContent = "You have already claimed your daily coins today.";
+          return;
+        }
+        coinsPlayer1 += 1;
+        lastClaimDatePlayer1 = new Date().toISOString();
+        claimMessagePlayer1El.textContent = "You earned 1 coin for daily login.";
+      } else {
+        if (!canClaimDaily(lastClaimDatePlayer2)) {
+          claimMessagePlayer2El.textContent = "You have already claimed your daily coins today.";
+          return;
+        }
+        coinsPlayer2 += 1;
+        lastClaimDatePlayer2 = new Date().toISOString();
+        claimMessagePlayer2El.textContent = "You earned 1 coin for daily login.";
       }
-      // If user has not battled today, they get 1 coin only
-      // If user won a battle today, they get 4 coins (handled in battle)
-      // Here, we check if user battled today by checking lastClaimDate and coins
-      // For simplicity, if lastClaimDate is today and coins increased by battle, no extra coins
-      // If no battle today, give 1 coin
-      const now = new Date();
-      if (!userFighter) {
-        claimMessageEl.textContent = "Select a fighter and battle to earn more coins!";
-        return;
+      updateCoinsDisplay();
+      saveState();
+    }
+
+    function updateTurnIndicator() {
+      if (currentTurn === 1) {
+        turnIndicatorEl.textContent = "Player 1's Turn";
+      } else if (currentTurn === 2) {
+        turnIndicatorEl.textContent = "Player 2's Turn";
+      } else {
+        turnIndicatorEl.textContent = "";
       }
-      if (canClaimDaily()) {
-        // Check if user battled today by checking if lastClaimDate is today
-        // If lastClaimDate is not today, give 1 coin as default daily
-        coins += 1;
-        claimMessageEl.textContent = "You earned 1 coin for daily login.";
-        lastClaimDate = now.toISOString();
-        updateCoinsDisplay();
-        saveState();
-      }
+    }
+
+    function startBattle() {
+      if (!player1Fighter || !player2Fighter) return;
+      player1Health = player1Fighter.health;
+      player2Health = player2Fighter.health;
+      player1FighterNameEl.textContent = player1Fighter.name;
+      player2FighterNameEl.textContent = player2Fighter.name;
+      updateHealthDisplay();
+      battleLog = [];
+      battleLogEl.textContent = "";
+      fighterSelectionEl.classList.add("hidden");
+      battleSectionEl.classList.remove("hidden");
+      claimDailyButtonPlayer1.disabled = true;
+      claimDailyButtonPlayer2.disabled = true;
+      restartButton.classList.add("hidden");
+      currentTurn = 1;
+      updateTurnIndicator();
+      renderSkills(1);
+      renderSkills(2);
     }
 
     // Event listeners
     document.querySelectorAll(".fighter-card").forEach(btn => {
       btn.addEventListener("click", () => {
         const fighterKey = btn.getAttribute("data-fighter");
-        userFighter = fighters[fighterKey];
+        const player = parseInt(btn.getAttribute("data-player"));
+        if (player === 1) {
+          player1Fighter = fighters[fighterKey];
+        } else {
+          player2Fighter = fighters[fighterKey];
+        }
         saveState();
-        startBattle();
+        if (player1Fighter && player2Fighter) {
+          startBattle();
+        }
       });
     });
 
-    claimDailyButton.addEventListener("click", claimDailyCoins);
+    claimDailyButtonPlayer1.addEventListener("click", () => claimDailyCoins(1));
+    claimDailyButtonPlayer2.addEventListener("click", () => claimDailyCoins(2));
     restartButton.addEventListener("click", restartBattle);
 
     // Initialize app
     loadState();
     updateCoinsDisplay();
-    if (userFighter) {
+    if (player1Fighter && player2Fighter) {
       startBattle();
     }
+    updateTurnIndicator();
   </script>
 </body>
 </html>
