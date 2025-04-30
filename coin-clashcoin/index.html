@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coin Clashcoin - Crypto Fighter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .skill-button {
+      transition: background-color 0.3s ease;
+    }
+    .skill-button:hover {
+      background-color: #4f46e5;
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
+  <header class="mb-6 text-center">
+    <h1 class="text-4xl font-bold mb-2">Coin Clashcoin</h1>
+    <p class="text-lg text-gray-300">Select your fighter, use skills, win coins!</p>
+  </header>
+
+  <main class="w-full max-w-3xl bg-gray-800 rounded-lg p-6 shadow-lg">
+    <section id="coin-balance" class="mb-6 text-center text-xl font-semibold">
+      Coins: <span id="coins">0</span>
+    </section>
+
+    <section id="fighter-selection" class="mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Select Your Fighter</h2>
+      <div class="grid grid-cols-3 gap-4">
+        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="warrior">
+          <i class="fas fa-shield-alt fa-3x mb-2"></i>
+          <div class="text-lg font-bold">Warrior</div>
+          <div class="text-sm text-gray-400">Strong defense, moderate attack</div>
+        </button>
+        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="mage">
+          <i class="fas fa-hat-wizard fa-3x mb-2"></i>
+          <div class="text-lg font-bold">Mage</div>
+          <div class="text-sm text-gray-400">Powerful magic attacks</div>
+        </button>
+        <button class="fighter-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition" data-fighter="rogue">
+          <i class="fas fa-user-ninja fa-3x mb-2"></i>
+          <div class="text-lg font-bold">Rogue</div>
+          <div class="text-sm text-gray-400">Fast and agile</div>
+        </button>
+      </div>
+    </section>
+
+    <section id="battle-section" class="hidden">
+      <h2 class="text-2xl font-semibold mb-4">Battle</h2>
+      <div class="mb-4">
+        <div class="mb-2">Your Fighter: <span id="user-fighter-name" class="font-bold"></span></div>
+        <div class="mb-2">Opponent Fighter: <span id="opponent-fighter-name" class="font-bold"></span></div>
+      </div>
+      <div class="mb-4">
+        <div class="mb-2">Your Health: <span id="user-health" class="font-bold">100</span></div>
+        <div class="mb-2">Opponent Health: <span id="opponent-health" class="font-bold">100</span></div>
+      </div>
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold mb-2">Use Your Skills</h3>
+        <div id="skills-container" class="flex gap-4">
+          <!-- Skill buttons will be inserted here -->
+        </div>
+      </div>
+      <div id="battle-log" class="bg-gray-700 rounded p-4 h-40 overflow-y-auto text-sm"></div>
+      <div class="mt-6 text-center">
+        <button id="restart-button" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">Restart Battle</button>
+      </div>
+    </section>
+
+    <section id="daily-claim-section" class="mt-6 text-center">
+      <button id="claim-daily-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition">Claim Daily Coins</button>
+      <p id="claim-message" class="mt-2 text-gray-400"></p>
+    </section>
+  </main>
+
+  <script>
+    const fighters = {
+      warrior: {
+        name: "Warrior",
+        health: 100,
+        skills: [
+          { name: "Shield Bash", damage: 15, description: "Strong bash with shield" },
+          { name: "Sword Slash", damage: 20, description: "Powerful sword attack" }
+        ]
+      },
+      mage: {
+        name: "Mage",
+        health: 80,
+        skills: [
+          { name: "Fireball", damage: 25, description: "Cast a fireball" },
+          { name: "Ice Spike", damage: 20, description: "Shoot an ice spike" }
+        ]
+      },
+      rogue: {
+        name: "Rogue",
+        health: 90,
+        skills: [
+          { name: "Backstab", damage: 30, description: "Sneak attack from behind" },
+          { name: "Poison Dart", damage: 15, description: "Throw a poison dart" }
+        ]
+      }
+    };
+
+    let userFighter = null;
+    let opponentFighter = null;
+    let userHealth = 0;
+    let opponentHealth = 0;
+    let coins = 0;
+    let lastClaimDate = null;
+    let battleLog = [];
+
+    const coinsEl = document.getElementById("coins");
+    const fighterSelectionEl = document.getElementById("fighter-selection");
+    const battleSectionEl = document.getElementById("battle-section");
+    const userFighterNameEl = document.getElementById("user-fighter-name");
+    const opponentFighterNameEl = document.getElementById("opponent-fighter-name");
+    const userHealthEl = document.getElementById("user-health");
+    const opponentHealthEl = document.getElementById("opponent-health");
+    const skillsContainerEl = document.getElementById("skills-container");
+    const battleLogEl = document.getElementById("battle-log");
+    const claimDailyButton = document.getElementById("claim-daily-button");
+    const claimMessageEl = document.getElementById("claim-message");
+    const restartButton = document.getElementById("restart-button");
+
+    function saveState() {
+      localStorage.setItem("coins", coins);
+      localStorage.setItem("lastClaimDate", lastClaimDate);
+      localStorage.setItem("userFighter", userFighter ? userFighter.name : "");
+    }
+
+    function loadState() {
+      coins = parseInt(localStorage.getItem("coins")) || 0;
+      lastClaimDate = localStorage.getItem("lastClaimDate");
+      const savedFighterName = localStorage.getItem("userFighter");
+      userFighter = Object.values(fighters).find(f => f.name === savedFighterName) || null;
+    }
+
+    function updateCoinsDisplay() {
+      coinsEl.textContent = coins;
+    }
+
+    function updateHealthDisplay() {
+      userHealthEl.textContent = userHealth;
+      opponentHealthEl.textContent = opponentHealth;
+    }
+
+    function addBattleLog(message) {
+      battleLog.push(message);
+      if (battleLog.length > 100) {
+        battleLog.shift();
+      }
+      battleLogEl.textContent = battleLog.join("\n");
+      battleLogEl.scrollTop = battleLogEl.scrollHeight;
+    }
+
+    function getRandomOpponent() {
+      const fighterKeys = Object.keys(fighters);
+      const randomKey = fighterKeys[Math.floor(Math.random() * fighterKeys.length)];
+      return fighters[randomKey];
+    }
+
+    function startBattle() {
+      if (!userFighter) return;
+      opponentFighter = getRandomOpponent();
+      userHealth = userFighter.health;
+      opponentHealth = opponentFighter.health;
+      userFighterNameEl.textContent = userFighter.name;
+      opponentFighterNameEl.textContent = opponentFighter.name;
+      updateHealthDisplay();
+      battleLog = [];
+      battleLogEl.textContent = "";
+      fighterSelectionEl.classList.add("hidden");
+      battleSectionEl.classList.remove("hidden");
+      claimDailyButton.disabled = true;
+      claimMessageEl.textContent = "";
+      restartButton.classList.add("hidden");
+      renderSkills();
+    }
+
+    function renderSkills() {
+      skillsContainerEl.innerHTML = "";
+      userFighter.skills.forEach((skill, index) => {
+        const btn = document.createElement("button");
+        btn.className = "skill-button bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded";
+        btn.textContent = skill.name;
+        btn.title = skill.description;
+        btn.onclick = () => useSkill(index);
+        skillsContainerEl.appendChild(btn);
+      });
+    }
+
+    function useSkill(skillIndex) {
+      if (userHealth <= 0 || opponentHealth <= 0) return;
+      const skill = userFighter.skills[skillIndex];
+      // User attacks opponent
+      opponentHealth -= skill.damage;
+      addBattleLog(`You used ${skill.name} and dealt ${skill.damage} damage.`);
+      if (opponentHealth <= 0) {
+        opponentHealth = 0;
+        updateHealthDisplay();
+        addBattleLog("You won the battle!");
+        endBattle(true);
+        return;
+      }
+      updateHealthDisplay();
+
+      // Opponent attacks user with random skill
+      const oppSkillIndex = Math.floor(Math.random() * opponentFighter.skills.length);
+      const oppSkill = opponentFighter.skills[oppSkillIndex];
+      userHealth -= oppSkill.damage;
+      addBattleLog(`Opponent used ${oppSkill.name} and dealt ${oppSkill.damage} damage.`);
+      if (userHealth <= 0) {
+        userHealth = 0;
+        updateHealthDisplay();
+        addBattleLog("You lost the battle.");
+        endBattle(false);
+        return;
+      }
+      updateHealthDisplay();
+    }
+
+    function endBattle(userWon) {
+      claimDailyButton.disabled = false;
+      restartButton.classList.remove("hidden");
+      if (userWon) {
+        coins += 4;
+        addBattleLog("You earned 4 coins!");
+      } else {
+        coins += 1;
+        addBattleLog("You earned 1 coin.");
+      }
+      updateCoinsDisplay();
+      saveState();
+    }
+
+    function restartBattle() {
+      battleSectionEl.classList.add("hidden");
+      fighterSelectionEl.classList.remove("hidden");
+      battleLog = [];
+      battleLogEl.textContent = "";
+      restartButton.classList.add("hidden");
+    }
+
+    function canClaimDaily() {
+      if (!lastClaimDate) return true;
+      const lastDate = new Date(lastClaimDate);
+      const now = new Date();
+      return now.toDateString() !== lastDate.toDateString();
+    }
+
+    function claimDailyCoins() {
+      if (!canClaimDaily()) {
+        claimMessageEl.textContent = "You have already claimed your daily coins today.";
+        return;
+      }
+      // If user has not battled today, they get 1 coin only
+      // If user won a battle today, they get 4 coins (handled in battle)
+      // Here, we check if user battled today by checking lastClaimDate and coins
+      // For simplicity, if lastClaimDate is today and coins increased by battle, no extra coins
+      // If no battle today, give 1 coin
+      const now = new Date();
+      if (!userFighter) {
+        claimMessageEl.textContent = "Select a fighter and battle to earn more coins!";
+        return;
+      }
+      if (canClaimDaily()) {
+        // Check if user battled today by checking if lastClaimDate is today
+        // If lastClaimDate is not today, give 1 coin as default daily
+        coins += 1;
+        claimMessageEl.textContent = "You earned 1 coin for daily login.";
+        lastClaimDate = now.toISOString();
+        updateCoinsDisplay();
+        saveState();
+      }
+    }
+
+    // Event listeners
+    document.querySelectorAll(".fighter-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const fighterKey = btn.getAttribute("data-fighter");
+        userFighter = fighters[fighterKey];
+        saveState();
+        startBattle();
+      });
+    });
+
+    claimDailyButton.addEventListener("click", claimDailyCoins);
+    restartButton.addEventListener("click", restartBattle);
+
+    // Initialize app
+    loadState();
+    updateCoinsDisplay();
+    if (userFighter) {
+      startBattle();
+    }
+  </script>
+</body>
+</html>
